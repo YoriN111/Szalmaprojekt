@@ -116,7 +116,7 @@ $router->add('POST', '/api/upload', [$upload, 'upload']);
 
 // Swagger
 $router->add('GET', '/api/swagger.json', function (array $request) {
-    $openapi = Generator::scan([__DIR__ . '/src']);
+    $openapi = (new Generator())->generate([__DIR__ . '/src']);
     header('Content-Type: application/json');
     echo $openapi->toJson();
     exit;
