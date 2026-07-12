@@ -1089,9 +1089,21 @@ async function adminUsers() {
 }
 
 // ── Router ────────────────────────────────────────────────────────────────────
+function handleVerifiedParam() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('verified')) return;
+    if (params.get('verified') === '1') {
+        toast('Email verified! You can now log in.', 'success');
+    } else {
+        toast('Invalid or expired verification link.', 'error');
+    }
+    window.history.replaceState({}, '', window.location.pathname + window.location.hash);
+}
+
 function route() {
     Auth.init();
     renderNavbar();
+    handleVerifiedParam();
     const hash = window.location.hash.replace(/^#/, '') || 'restaurants';
     const [page, sub] = hash.split('/');
     switch (page) {

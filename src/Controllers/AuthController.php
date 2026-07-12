@@ -163,18 +163,18 @@ class AuthController
     )]
     public function verifyEmail(array $request): void
     {
-        $token = $request['query']['token'] ?? '';
-        if (!$token) {
-            Response::error('Token is required', 422);
-        }
+        $token    = $request['query']['token'] ?? '';
+        $frontend = rtrim($_ENV['APP_URL'] ?? '', '/') . '/frontend/index.html';
 
-        $user = User::findByVerifyToken($token);
+        $user = $token ? User::findByVerifyToken($token) : null;
         if (!$user) {
-            Response::error('Invalid or expired verification token', 400);
+            header('Location: ' . $frontend . '?verified=0#login');
+            exit;
         }
 
         User::markEmailVerified($user['id']);
-        Response::json(['message' => 'Email verified. You can now log in.']);
+        header('Location: ' . $frontend . '?verified=1#login');
+        exit;
     }
 
     #[OA\Post(
